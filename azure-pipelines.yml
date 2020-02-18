@@ -1,0 +1,39 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- script: docker login -u <acr-name> -p $(ACR-SECRET) <acr-name>.azurecr.io
+  displayName: 'Login to Azure Container Registry'
+
+# TODO: See if there's a way to cache this, and whether caching would be more efficient/cost-effective than pulling it everytime.
+- script: docker pull <acr-name>.azurecr.io/tools/mkdocs:0.1
+  displayName: 'Pull mkdocs docker image'
+
+- script: docker run --rm --mount type=bind,source=$(pwd),target=/mnt/repo <acr-name>.azurecr.io/tools/mkdocs:0.1
+  displayName: Run MkDocs Build through the docker container.
+
+# There's a bug in MkDocs 1.0.4 release where favicon is not updated during build, so need to manually copy over the file.
+# See https://github.com/mkdocs/mkdocs/pull/1672
+# Also note that Material Theme expects a .png file, not .ico file.
+# Need to run sudo because the file was created by MkDocs in Docker container which uses root.
+- script: sudo cp content/docs/img/favicon.png content/site/assets/images/favicon.png
+  displayName: Update favicon
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: 'content/site'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    replaceExistingArchive: true
+
+- task: AzureRmWebAppDeployment@4
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: '<Your Subscription Here>'
+    appType: 'webApp'
+    WebAppName: '<app-site-name>'
+    packageForLinux: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'

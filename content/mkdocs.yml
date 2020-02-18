@@ -1,0 +1,45 @@
+site_name: MkDocs Docker Azure Pipeline Demo
+dev_addr: '0.0.0.0:8000'
+repo_url: https://github.com/dusklight/mkdocs-docker-azure-pipelines-demo
+edit_uri: blob/master/content/docs/
+nav:
+  - 'Home': 'index.md'
+  - 'About': 'about.md'
+  - 'Section A':
+      - 'Testing Image': 'section-a/index.md'
+      - 'Section File 1': 'section-a/section-file.md'
+      - 'Sub Section':
+          - 'Sub Section': 'section-a/sub-section/index.md'
+  - 'Section B': 'section-b/index.md'
+  - 'Formatting':
+      - 'Standard': 'formatting/formatting-standard.md'
+      - 'Extensions': 'formatting/formatting-extensions.md'
+theme:
+  name: 'material'
+plugins:
+  - search
+  - git-revision-date-localized
+markdown_extensions:
+   - toc:
+      permalink: true
+   - codehilite
+   - admonition
+   - footnotes
+   - meta
+   - pymdownx.arithmatex
+   - pymdownx.betterem:
+       smart_enable: all
+   - pymdownx.caret
+   - pymdownx.critic
+   - pymdownx.details
+   - pymdownx.emoji:
+       emoji_generator: !!python/name:pymdownx.emoji.to_svg
+   - pymdownx.inlinehilite
+   - pymdownx.magiclink
+   - pymdownx.mark
+   # Disabling this for now, since it causes dates such as 2/3/2020 to be displayed as fraction "symbol", 2/3.
+   #- pymdownx.smartsymbols
+   - pymdownx.superfences
+   - pymdownx.tasklist:
+       custom_checkbox: true
+   - pymdownx.tilde

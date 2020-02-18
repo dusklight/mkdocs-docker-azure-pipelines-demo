@@ -1,0 +1,4 @@
+.vscode
+
+# Uncomment the following for normal use.  For demo, we'll include the MkDocs build output in the repo.
+#content/site
